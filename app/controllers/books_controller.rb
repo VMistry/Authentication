@@ -1,5 +1,7 @@
 class BooksController < ApplicationController
   before_action :set_book, only: [:show, :edit, :update, :destroy]
+  #This will say that only admin can delete
+  before_action :authorize_admin, only: :destroy
 
   # GET /books
   # GET /books.json
@@ -71,4 +73,11 @@ class BooksController < ApplicationController
     def book_params
       params.require(:book).permit(:title, :desc)
     end
+
+  # This will allow you to create a method for preventing non admins accessing
+  private
+  def authorize_admin
+    return unless !current_user.admin?
+    redirect_to root_path, alert: 'Admins only!'
+  end
 end
